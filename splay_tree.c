@@ -2,35 +2,40 @@
 
 #include "header.h"
 
-ELEMENT *add_element(int value, ELEMENT *root) {
-    ELEMENT* new_element = create_element(value);
+ELEMENT *insert(ELEMENT *root, int k) {
+    // Simple Case: If tree is empty
+    if (root == NULL) return create_element(k);
 
-    if (is_tree_null(root)){
-        return new_element;
-    }
+    // Bring the closest leaf node to root
+    root = search_element(k, root);
 
+    // If value is already present, then return
+    if (root->value == k) return root;
 
-    /*if(is_presented_in_tree(value, root)){
-        return root;
-    }*/
+    // Otherwise allocate memory for new node
+    ELEMENT *newnode = create_element(k);
 
-    if(is_in_bigger_tree(root, value)){
-        new_element->bigger = root->bigger;
-        new_element->smaller = root;
-        root->bigger = NULL;
-    }
-
-    else if(is_in_smaller_tree(root, value)) {
-        new_element->smaller = root->smaller;
-        new_element->bigger = root;
+    // If root's value is greater, make root as bigger child
+    // of newnode and copy the smaller child of root to newnode
+    if (root->value > k) {
+        newnode->bigger = root;
+        newnode->smaller = root->smaller;
         root->smaller = NULL;
     }
 
-    return new_element;
+        // If root's value is smaller, make root as smaller child
+        // of newnode and copy the bigger child of root to newnode
+    else {
+        newnode->smaller = root;
+        newnode->bigger = root->bigger;
+        root->bigger = NULL;
+    }
+
+    return newnode; // newnode becomes new root
 }
 
 
-ELEMENT *splay_to_root(int value, ELEMENT *tree) {
+ELEMENT *search_element(int value, ELEMENT *tree) {
     int tree_value;
 
     if (is_tree_null(tree)) {
@@ -53,7 +58,7 @@ ELEMENT *splay_to_root(int value, ELEMENT *tree) {
         if (tree_value < value) {
             //bigger bigger situacia -> rotacia dolava
 
-            tree->bigger->bigger = splay_to_root(value, tree->bigger->bigger);
+            tree->bigger->bigger = search_element(value, tree->bigger->bigger);
             // rekurzivne dostanem navrch bigger->bigger
 
             tree = left_rotation(tree);
@@ -61,7 +66,7 @@ ELEMENT *splay_to_root(int value, ELEMENT *tree) {
         } else if (value >= tree->bigger->value) {
             //bigger smaller situacia -> rotacia doprava
 
-            tree->bigger->smaller = splay_to_root(value, tree->bigger->smaller);
+            tree->bigger->smaller = search_element(value, tree->bigger->smaller);
             // rekurzivne dostanem navrch bigger->smaller
 
             //spravim prve otocenie
@@ -78,23 +83,23 @@ ELEMENT *splay_to_root(int value, ELEMENT *tree) {
 
 
     } else {
+        tree_value = tree->smaller->value;
+
         if (is_tree_null(tree->smaller)) {
             return tree;
         }
 
-        tree_value = tree->smaller->value;
-
         if (tree_value > value) {
             //smaller smaller situacia -> rotacia doprava
 
-            tree->smaller->smaller = splay_to_root(value, tree->smaller->smaller);
+            tree->smaller->smaller = search_element(value, tree->smaller->smaller);
             // rekurzivne dostanem navrch smaller->smaller
+            tree = right_rotation(tree);
 
-        } else if (tree_value < value) {
-            //smaller bigger situacia -> rotacia doprava
-
+        } else if (tree_value < value) // Zig-Zag (Left Right)
+        {
             // rekurzivne dostanem navrch smaller->bigger
-            tree->smaller->bigger = splay_to_root(value, tree->smaller->bigger);
+            tree->smaller->bigger = search_element(value, tree->smaller->bigger);
             tree = right_rotation(tree);
 
             //spravim prve otocenie
@@ -102,27 +107,12 @@ ELEMENT *splay_to_root(int value, ELEMENT *tree) {
                 tree->smaller = left_rotation(tree->smaller);
             }
         }
-
         //Potrebujem dalsie otocenie? Som aktualne root?
         if (need_rotation(tree->smaller)) {
             return right_rotation(tree);
         } else {
             return tree;
         }
-    }
-}
-
-ELEMENT* search_element(int value, ELEMENT* tree){
-    ELEMENT* element;
-
-    if((element = is_presented_in_tree(value, tree)) == NULL){
-
-        printf("Hodnota sa v strome nenachadza\n");
-        return NULL;
-    }
-    else{
-        printf("Hodnota sa v strome nachadza\n");
-        return element;
     }
 }
 

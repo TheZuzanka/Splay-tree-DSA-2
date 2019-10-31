@@ -21,7 +21,8 @@ void remove_element(ELEMENT *tree, int value);
 
 //from splay_tree.c
 ELEMENT *add_element(int value, ELEMENT *root);
-ELEMENT *splay_to_root(int value, ELEMENT *tree);
+ELEMENT *insert(ELEMENT *root, int k);
+ELEMENT *search_element(int value, ELEMENT *tree);
 ELEMENT *left_rotation(ELEMENT *previous_root);
 ELEMENT *right_rotation(ELEMENT *previous_root);
 
