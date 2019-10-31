@@ -55,3 +55,14 @@ int need_rotation(ELEMENT* tree){
         return 1;
     }
 }
+
+ELEMENT* is_presented_in_tree(int value, ELEMENT* tree){
+    ELEMENT* element;
+
+    if((element = splay_to_root(value, tree)) == NULL){
+        return NULL;
+    }
+    else{
+        return  element;
+    }
+}

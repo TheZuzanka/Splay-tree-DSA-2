@@ -20,8 +20,8 @@ ELEMENT *search_value(ELEMENT *tree, int value);
 void remove_element(ELEMENT *tree, int value);
 
 //from splay_tree.c
-ELEMENT *add_element(ELEMENT *root, int value);
-ELEMENT *search_element(int value, ELEMENT *tree);
+ELEMENT *add_element(int value, ELEMENT *root);
+ELEMENT *splay_to_root(int value, ELEMENT *tree);
 ELEMENT *left_rotation(ELEMENT *previous_root);
 ELEMENT *right_rotation(ELEMENT *previous_root);
 
@@ -32,6 +32,7 @@ int is_bigger_empty(ELEMENT* root);
 int is_in_smaller_tree(ELEMENT* root, int value);
 int is_in_bigger_tree(ELEMENT* root, int value);
 int need_rotation(ELEMENT* tree);
+ELEMENT* is_presented_in_tree(int value, ELEMENT* tree);
 
 //from printing_info.c
 void print2DUtil(ELEMENT *root, int space);
